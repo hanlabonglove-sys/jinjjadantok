@@ -43,35 +43,51 @@ const nicknameInput =
 
 
 const changeNicknameModal =
-    document.getElementById("changeNicknameModal");
+    document.getElementById(
+        "changeNicknameModal"
+    );
 
 const changeNicknameForm =
-    document.getElementById("changeNicknameForm");
+    document.getElementById(
+        "changeNicknameForm"
+    );
 
 const changeNicknameInput =
-    document.getElementById("changeNicknameInput");
+    document.getElementById(
+        "changeNicknameInput"
+    );
 
 
 
 const adminButton =
-    document.getElementById("adminButton");
+    document.getElementById(
+        "adminButton"
+    );
 
 const adminModal =
-    document.getElementById("adminModal");
+    document.getElementById(
+        "adminModal"
+    );
 
 const adminForm =
-    document.getElementById("adminForm");
+    document.getElementById(
+        "adminForm"
+    );
 
 const adminPasswordInput =
-    document.getElementById("adminPassword");
+    document.getElementById(
+        "adminPassword"
+    );
 
 const adminStatus =
-    document.getElementById("adminStatus");
+    document.getElementById(
+        "adminStatus"
+    );
 
 
 
 /* ==========================================
-   닉네임 표시
+   NICKNAME UI
 ========================================== */
 
 function updateNicknameUI() {
@@ -83,18 +99,23 @@ function updateNicknameUI() {
 
 
 /* ==========================================
-   닉네임 최초 설정
+   FIRST NICKNAME
 ========================================== */
 
 if (!nickname) {
 
-    nicknameModal.classList.remove("hidden");
+    nicknameModal.classList.remove(
+        "hidden"
+    );
 
 } else {
 
-    nicknameModal.classList.add("hidden");
+    nicknameModal.classList.add(
+        "hidden"
+    );
 
     updateNicknameUI();
+
 
     socket.emit(
         "set_nickname",
@@ -107,7 +128,7 @@ if (!nickname) {
 
 
 /* ==========================================
-   닉네임 최초 입력
+   NICKNAME FORM
 ========================================== */
 
 nicknameForm.addEventListener(
@@ -126,7 +147,11 @@ nicknameForm.addEventListener(
         }
 
 
-        nickname = value.substring(0, 20);
+        nickname =
+            value.substring(
+                0,
+                20
+            );
 
 
         localStorage.setItem(
@@ -159,11 +184,13 @@ nicknameForm.addEventListener(
 
 
 /* ==========================================
-   닉네임 변경 버튼
+   CHANGE NICKNAME
 ========================================== */
 
 document
-    .getElementById("nicknameButton")
+    .getElementById(
+        "nicknameButton"
+    )
     .addEventListener(
         "click",
         function() {
@@ -171,9 +198,11 @@ document
             changeNicknameInput.value =
                 nickname;
 
+
             changeNicknameModal.classList.remove(
                 "hidden"
             );
+
 
             changeNicknameInput.focus();
 
@@ -181,10 +210,6 @@ document
     );
 
 
-
-/* ==========================================
-   닉네임 변경
-========================================== */
 
 changeNicknameForm.addEventListener(
     "submit",
@@ -203,7 +228,10 @@ changeNicknameForm.addEventListener(
 
 
         nickname =
-            value.substring(0, 20);
+            value.substring(
+                0,
+                20
+            );
 
 
         localStorage.setItem(
@@ -233,7 +261,7 @@ changeNicknameForm.addEventListener(
 
 
 /* ==========================================
-   메시지 전송
+   SEND MESSAGE
 ========================================== */
 
 messageForm.addEventListener(
@@ -255,8 +283,11 @@ messageForm.addEventListener(
         socket.emit(
             "send_message",
             {
-                nickname: nickname || "익명",
-                message: message
+                nickname:
+                    nickname || "익명",
+
+                message:
+                    message
             }
         );
 
@@ -271,13 +302,15 @@ messageForm.addEventListener(
 
 
 /* ==========================================
-   메시지 추가
+   ADD MESSAGE
 ========================================== */
 
 function addMessage(data) {
 
     const messageElement =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     messageElement.className =
@@ -290,7 +323,10 @@ function addMessage(data) {
 
 
     const top =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     top.className =
         "message-top";
@@ -298,7 +334,10 @@ function addMessage(data) {
 
 
     const name =
-        document.createElement("strong");
+        document.createElement(
+            "strong"
+        );
+
 
     name.textContent =
         data.nickname;
@@ -306,33 +345,50 @@ function addMessage(data) {
 
 
     const time =
-        document.createElement("span");
+        document.createElement(
+            "span"
+        );
+
 
     time.textContent =
         data.time;
 
 
 
-    top.appendChild(name);
+    top.appendChild(
+        name
+    );
 
-    top.appendChild(time);
+
+    top.appendChild(
+        time
+    );
 
 
 
     const text =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     text.className =
         "message-text";
+
 
     text.textContent =
         data.message;
 
 
 
-    messageElement.appendChild(top);
+    messageElement.appendChild(
+        top
+    );
 
-    messageElement.appendChild(text);
+
+    messageElement.appendChild(
+        text
+    );
 
 
 
@@ -361,7 +417,7 @@ function addMessage(data) {
 
 
 /* ==========================================
-   관리자 삭제 버튼
+   DELETE BUTTON
 ========================================== */
 
 function addDeleteButton(
@@ -376,12 +432,13 @@ function addDeleteButton(
     ) {
 
         return;
-
     }
 
 
     const button =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
 
     button.className =
@@ -396,6 +453,11 @@ function addDeleteButton(
         "button";
 
 
+    /*
+     * 확인창 없음.
+     * 클릭하면 바로 삭제 요청.
+     */
+
     button.addEventListener(
         "click",
         function() {
@@ -405,22 +467,14 @@ function addDeleteButton(
             }
 
 
-            const ok =
-                confirm(
-                    "이 메시지를 삭제할까요?"
-                );
-
-
-            if (!ok) {
-                return;
-            }
-
-
             socket.emit(
                 "delete_message",
                 {
-                    id: messageId,
-                    password: adminPassword
+                    id:
+                        messageId,
+
+                    password:
+                        adminPassword
                 }
             );
 
@@ -436,14 +490,16 @@ function addDeleteButton(
 
 
 /* ==========================================
-   새 메시지
+   NEW MESSAGE
 ========================================== */
 
 socket.on(
     "new_message",
     function(data) {
 
-        addMessage(data);
+        addMessage(
+            data
+        );
 
     }
 );
@@ -451,7 +507,7 @@ socket.on(
 
 
 /* ==========================================
-   메시지 삭제
+   DELETE MESSAGE
 ========================================== */
 
 socket.on(
@@ -476,7 +532,7 @@ socket.on(
 
 
 /* ==========================================
-   이전 메시지 불러오기
+   LOAD OLD MESSAGES
 ========================================== */
 
 async function loadMessages() {
@@ -493,13 +549,16 @@ async function loadMessages() {
             await response.json();
 
 
-        messages.innerHTML = "";
+        messages.innerHTML =
+            "";
 
 
         data.forEach(
             function(message) {
 
-                addMessage(message);
+                addMessage(
+                    message
+                );
 
             }
         );
@@ -508,12 +567,11 @@ async function loadMessages() {
     } catch (error) {
 
         console.error(
-            "메시지를 불러오지 못했습니다.",
+            "메시지 불러오기 실패:",
             error
         );
 
     }
-
 }
 
 
@@ -522,7 +580,7 @@ loadMessages();
 
 
 /* ==========================================
-   접속자 수
+   ONLINE COUNT
 ========================================== */
 
 socket.on(
@@ -538,7 +596,7 @@ socket.on(
 
 
 /* ==========================================
-   관리자 버튼
+   ADMIN BUTTON
 ========================================== */
 
 adminButton.addEventListener(
@@ -558,7 +616,7 @@ adminButton.addEventListener(
 
 
 /* ==========================================
-   관리자 로그인
+   ADMIN LOGIN
 ========================================== */
 
 adminForm.addEventListener(
@@ -580,7 +638,8 @@ adminForm.addEventListener(
         socket.emit(
             "admin_login",
             {
-                password: password
+                password:
+                    password
             }
         );
 
@@ -590,7 +649,7 @@ adminForm.addEventListener(
 
 
 /* ==========================================
-   관리자 로그인 결과
+   ADMIN LOGIN RESULT
 ========================================== */
 
 socket.on(
@@ -599,7 +658,9 @@ socket.on(
 
         if (data.success) {
 
-            isAdmin = true;
+            isAdmin =
+                true;
+
 
             adminPassword =
                 adminPasswordInput.value;
@@ -625,12 +686,14 @@ socket.on(
 
 
             /*
-             * 이미 화면에 있는 메시지에도
+             * 이미 있는 메시지에도
              * 삭제 버튼 추가
              */
 
             document
-                .querySelectorAll(".message")
+                .querySelectorAll(
+                    ".message"
+                )
                 .forEach(
                     function(element) {
 
@@ -643,7 +706,8 @@ socket.on(
                 );
 
 
-            adminPasswordInput.value = "";
+            adminPasswordInput.value =
+                "";
 
 
         } else {
