@@ -10,6 +10,13 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <!-- Google Search Console 인증 -->
+    <meta
+        name="google-site-verification"
+        content="ZMdlQlGyJYy0_AFKqGIhRNZ8wRzmGJdqipsmLmfHkag"
+    >
+
+    <!-- SEO -->
     <title>진짜 단톡 - 회원가입 없는 무료 실시간 채팅</title>
 
     <meta
@@ -33,7 +40,6 @@
     >
 
     <!-- Open Graph -->
-
     <meta
         property="og:title"
         content="진짜 단톡 - 무료 실시간 채팅"
@@ -49,9 +55,7 @@
         content="website"
     >
 
-
     <!-- CSS -->
-
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
@@ -66,9 +70,7 @@
 <div class="app">
 
 
-    <!-- =========================
-         상단
-    ========================== -->
+    <!-- 상단 -->
 
     <header class="topbar">
 
@@ -89,7 +91,7 @@
         <div class="header-actions">
 
 
-            <!-- 닉네임 변경 버튼 -->
+            <!-- 닉네임 변경 -->
 
             <button
                 id="nicknameButton"
@@ -109,7 +111,7 @@
             </button>
 
 
-            <!-- 접속자 수 -->
+            <!-- 접속자 -->
 
             <div class="online">
 
@@ -134,9 +136,7 @@
 
 
 
-    <!-- =========================
-         검색엔진용 소개
-    ========================== -->
+    <!-- SEO 소개 -->
 
     <section class="seo-intro">
 
@@ -153,9 +153,7 @@
 
 
 
-    <!-- =========================
-         채팅 영역
-    ========================== -->
+    <!-- 채팅 -->
 
     <main
         class="chat"
@@ -171,9 +169,7 @@
 
 
 
-    <!-- =========================
-         메시지 입력
-    ========================== -->
+    <!-- 메시지 입력 -->
 
     <form
         id="messageForm"
@@ -202,9 +198,7 @@
 
 
 
-<!-- ==================================================
-     최초 닉네임 설정 모달
-================================================== -->
+<!-- 최초 닉네임 -->
 
 <div
     id="nicknameModal"
@@ -254,9 +248,7 @@
 
 
 
-<!-- ==================================================
-     닉네임 변경 모달
-================================================== -->
+<!-- 닉네임 변경 -->
 
 <div
     id="changeNicknameModal"
@@ -292,7 +284,6 @@
                 required
             >
 
-
             <button
                 type="submit"
             >
@@ -307,19 +298,14 @@
 
 
 
-<!-- ==================================================
-     Socket.IO
-================================================== -->
+<!-- Socket.IO -->
 
 <script
     src="https://cdn.socket.io/4.8.1/socket.io.min.js"
 ></script>
 
 
-
-<!-- ==================================================
-     사이트 JavaScript
-================================================== -->
+<!-- 사이트 JS -->
 
 <script
     src="{{ url_for('static', filename='script.js') }}"
