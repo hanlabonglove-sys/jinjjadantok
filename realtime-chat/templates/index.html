@@ -10,16 +10,16 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>진짜 단톡</title>
+    <title>진짜 단톡 - 회원가입 없는 무료 실시간 채팅</title>
 
     <meta
         name="description"
-        content="회원가입 없이 닉네임만 등록하고 바로 대화할 수 있는 실시간 채팅방"
+        content="회원가입 없이 닉네임만 정하고 바로 참여할 수 있는 무료 실시간 채팅방입니다."
     >
 
     <meta
         name="keywords"
-        content="실시간 채팅, 채팅방, 단톡, 무료 채팅"
+        content="실시간 채팅, 무료 채팅, 채팅방, 단톡, 실시간 단톡, 닉네임 채팅"
     >
 
     <meta
@@ -28,19 +28,29 @@
     >
 
     <meta
-        property="og:title"
+        name="author"
         content="진짜 단톡"
+    >
+
+    <!-- Open Graph -->
+
+    <meta
+        property="og:title"
+        content="진짜 단톡 - 무료 실시간 채팅"
     >
 
     <meta
         property="og:description"
-        content="회원가입 없이 바로 참여하는 실시간 채팅방"
+        content="회원가입 없이 닉네임만 정하고 바로 참여하는 실시간 채팅방"
     >
 
     <meta
         property="og:type"
         content="website"
     >
+
+
+    <!-- CSS -->
 
     <link
         rel="stylesheet"
@@ -52,13 +62,16 @@
 
 <body>
 
+
 <div class="app">
+
 
     <!-- =========================
          상단
     ========================== -->
 
     <header class="topbar">
+
 
         <div class="title-area">
 
@@ -75,19 +88,21 @@
 
         <div class="header-actions">
 
-            <!-- 닉네임 변경 -->
+
+            <!-- 닉네임 변경 버튼 -->
 
             <button
                 id="nicknameButton"
                 class="nickname-button"
                 type="button"
+                aria-label="닉네임 변경"
             >
 
                 <span id="currentNickname">
                     익명
                 </span>
 
-                <span>
+                <span aria-hidden="true">
                     ✎
                 </span>
 
@@ -98,7 +113,10 @@
 
             <div class="online">
 
-                <span class="online-dot"></span>
+                <span
+                    class="online-dot"
+                    aria-hidden="true"
+                ></span>
 
                 <span id="onlineCount">
                     0
@@ -108,16 +126,41 @@
 
             </div>
 
+
         </div>
+
 
     </header>
 
 
+
     <!-- =========================
-         채팅
+         검색엔진용 소개
     ========================== -->
 
-    <main class="chat">
+    <section class="seo-intro">
+
+        <h2>
+            회원가입 없는 실시간 채팅
+        </h2>
+
+        <p>
+            닉네임만 정하면 바로 참여할 수 있는
+            무료 실시간 채팅방입니다.
+        </p>
+
+    </section>
+
+
+
+    <!-- =========================
+         채팅 영역
+    ========================== -->
+
+    <main
+        class="chat"
+        aria-label="실시간 채팅"
+    >
 
         <div
             id="messages"
@@ -125,6 +168,7 @@
         ></div>
 
     </main>
+
 
 
     <!-- =========================
@@ -142,6 +186,7 @@
             maxlength="500"
             placeholder="메시지를 입력하세요..."
             autocomplete="off"
+            aria-label="메시지 입력"
         >
 
         <button
@@ -152,21 +197,28 @@
 
     </form>
 
+
 </div>
 
 
-<!-- =========================
-     최초 닉네임 설정
-========================== -->
+
+<!-- ==================================================
+     최초 닉네임 설정 모달
+================================================== -->
 
 <div
     id="nicknameModal"
     class="modal"
 >
 
-    <div class="modal-box">
+    <div
+        class="modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="nicknameTitle"
+    >
 
-        <h2>
+        <h2 id="nicknameTitle">
             환영합니다!
         </h2>
 
@@ -188,7 +240,6 @@
                 required
             >
 
-
             <button
                 type="submit"
             >
@@ -202,18 +253,24 @@
 </div>
 
 
-<!-- =========================
-     닉네임 변경
-========================== -->
+
+<!-- ==================================================
+     닉네임 변경 모달
+================================================== -->
 
 <div
     id="changeNicknameModal"
     class="modal hidden"
 >
 
-    <div class="modal-box">
+    <div
+        class="modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="changeNicknameTitle"
+    >
 
-        <h2>
+        <h2 id="changeNicknameTitle">
             닉네임 변경
         </h2>
 
@@ -249,18 +306,20 @@
 </div>
 
 
-<!-- =========================
+
+<!-- ==================================================
      Socket.IO
-========================== -->
+================================================== -->
 
 <script
     src="https://cdn.socket.io/4.8.1/socket.io.min.js"
 ></script>
 
 
-<!-- =========================
-     우리 JS
-========================== -->
+
+<!-- ==================================================
+     사이트 JavaScript
+================================================== -->
 
 <script
     src="{{ url_for('static', filename='script.js') }}"
