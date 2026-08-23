@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>진짜 단톡</title>
+
+    <meta
+        name="description"
+        content="회원가입 없이 닉네임만 등록하고 바로 대화할 수 있는 실시간 채팅방"
+    >
+
+    <meta
+        name="keywords"
+        content="실시간 채팅, 채팅방, 단톡, 무료 채팅"
+    >
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <meta
+        property="og:title"
+        content="진짜 단톡"
+    >
+
+    <meta
+        property="og:description"
+        content="회원가입 없이 바로 참여하는 실시간 채팅방"
+    >
+
+    <meta
+        property="og:type"
+        content="website"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- =========================
+         상단
+    ========================== -->
+
+    <header class="topbar">
+
+        <div class="title-area">
+
+            <h1>
+                진짜 단톡
+            </h1>
+
+            <p>
+                새로고침 없이 실시간으로 대화하세요.
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <!-- 닉네임 변경 -->
+
+            <button
+                id="nicknameButton"
+                class="nickname-button"
+                type="button"
+            >
+
+                <span id="currentNickname">
+                    익명
+                </span>
+
+                <span>
+                    ✎
+                </span>
+
+            </button>
+
+
+            <!-- 접속자 수 -->
+
+            <div class="online">
+
+                <span class="online-dot"></span>
+
+                <span id="onlineCount">
+                    0
+                </span>
+
+                명 접속 중
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         채팅
+    ========================== -->
+
+    <main class="chat">
+
+        <div
+            id="messages"
+            class="messages"
+        ></div>
+
+    </main>
+
+
+    <!-- =========================
+         메시지 입력
+    ========================== -->
+
+    <form
+        id="messageForm"
+        class="input-area"
+    >
+
+        <input
+            id="messageInput"
+            type="text"
+            maxlength="500"
+            placeholder="메시지를 입력하세요..."
+            autocomplete="off"
+        >
+
+        <button
+            type="submit"
+        >
+            전송
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- =========================
+     최초 닉네임 설정
+========================== -->
+
+<div
+    id="nicknameModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <h2>
+            환영합니다!
+        </h2>
+
+        <p>
+            사용할 닉네임을 입력해주세요.
+        </p>
+
+
+        <form
+            id="nicknameForm"
+        >
+
+            <input
+                id="nicknameInput"
+                type="text"
+                maxlength="20"
+                placeholder="닉네임"
+                autocomplete="off"
+                required
+            >
+
+
+            <button
+                type="submit"
+            >
+                입장하기
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     닉네임 변경
+========================== -->
+
+<div
+    id="changeNicknameModal"
+    class="modal hidden"
+>
+
+    <div class="modal-box">
+
+        <h2>
+            닉네임 변경
+        </h2>
+
+        <p>
+            새로운 닉네임을 입력해주세요.
+        </p>
+
+
+        <form
+            id="changeNicknameForm"
+        >
+
+            <input
+                id="changeNicknameInput"
+                type="text"
+                maxlength="20"
+                placeholder="새 닉네임"
+                autocomplete="off"
+                required
+            >
+
+
+            <button
+                type="submit"
+            >
+                변경하기
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     Socket.IO
+========================== -->
+
+<script
+    src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+></script>
+
+
+<!-- =========================
+     우리 JS
+========================== -->
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+
+</body>
+
+</html>

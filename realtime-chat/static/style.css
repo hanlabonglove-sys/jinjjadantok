@@ -1,0 +1,480 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #f5f3ee;
+    color: #242424;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.app {
+    width: 100%;
+    max-width: 900px;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background: #fffdf8;
+}
+
+
+/* =========================
+   상단
+========================= */
+
+.topbar {
+    padding: 20px 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid #e9e4d9;
+}
+
+.title-area {
+    min-width: 0;
+}
+
+.topbar h1 {
+    margin: 0;
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.topbar p {
+    margin: 5px 0 0;
+
+    font-size: 13px;
+    color: #888;
+}
+
+
+/* =========================
+   오른쪽 영역
+========================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* 닉네임 버튼 */
+
+.nickname-button {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px 12px;
+
+    border: 1px solid #ddd7ca;
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: #333333;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s,
+        transform 0.15s;
+}
+
+.nickname-button:hover {
+    background: #f4f1ea;
+}
+
+.nickname-button:active {
+    transform: scale(0.96);
+}
+
+
+/* 접속자 */
+
+.online {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    white-space: nowrap;
+
+    font-size: 13px;
+    color: #777;
+}
+
+.online-dot {
+    width: 9px;
+    height: 9px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #62c174;
+}
+
+
+/* =========================
+   채팅
+========================= */
+
+.chat {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 25px;
+
+    scroll-behavior: smooth;
+}
+
+.messages {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    min-height: 100%;
+}
+
+
+/* 메시지 */
+
+.message {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 75%;
+}
+
+.message.mine {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.message.other {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+
+/* 닉네임 */
+
+.nickname {
+    margin: 0 0 4px 5px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #777;
+}
+
+
+/* 말풍선 */
+
+.bubble {
+    padding: 11px 15px;
+
+    border-radius: 18px;
+
+    line-height: 1.45;
+
+    word-break: break-word;
+    white-space: pre-wrap;
+
+    background: #eeeae1;
+}
+
+.mine .bubble {
+    background: #242424;
+    color: #ffffff;
+}
+
+
+/* 시간 */
+
+.time {
+    margin-top: 4px;
+
+    font-size: 10px;
+
+    color: #999;
+}
+
+
+/* =========================
+   입력창
+========================= */
+
+.input-area {
+    display: flex;
+
+    gap: 10px;
+
+    padding: 15px;
+
+    border-top: 1px solid #e9e4d9;
+
+    background: #fffdf8;
+}
+
+.input-area input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 13px 16px;
+
+    border: 1px solid #ddd7ca;
+    border-radius: 15px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    background: #ffffff;
+
+    transition: border 0.15s;
+}
+
+.input-area input:focus {
+    border-color: #999999;
+}
+
+.input-area button {
+    border: 0;
+
+    padding: 0 20px;
+
+    border-radius: 15px;
+
+    background: #242424;
+    color: #ffffff;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        opacity 0.15s,
+        transform 0.15s;
+}
+
+.input-area button:hover {
+    opacity: 0.85;
+}
+
+.input-area button:active {
+    transform: scale(0.96);
+}
+
+
+/* =========================
+   모달
+========================= */
+
+.modal {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    z-index: 100;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 380px;
+
+    padding: 30px;
+
+    border-radius: 25px;
+
+    background: #fffdf8;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.18);
+
+    animation: modalIn 0.18s ease-out;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-box h2 {
+    margin: 0 0 8px;
+
+    font-size: 24px;
+}
+
+.modal-box p {
+    margin: 0 0 20px;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+/* 닉네임 입력 */
+
+#nicknameForm,
+#changeNicknameForm {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+#nicknameForm input,
+#changeNicknameForm input {
+    width: 100%;
+
+    padding: 14px;
+
+    border: 1px solid #ddd7ca;
+    border-radius: 14px;
+
+    outline: none;
+
+    font-size: 15px;
+
+    background: #ffffff;
+}
+
+#nicknameForm input:focus,
+#changeNicknameForm input:focus {
+    border-color: #999999;
+}
+
+#nicknameForm button,
+#changeNicknameForm button {
+    padding: 14px;
+
+    border: 0;
+
+    border-radius: 14px;
+
+    background: #242424;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+#nicknameForm button:hover,
+#changeNicknameForm button:hover {
+    opacity: 0.85;
+}
+
+
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 600px) {
+
+    .topbar {
+        padding: 15px;
+    }
+
+    .topbar h1 {
+        font-size: 20px;
+    }
+
+    .topbar p {
+        font-size: 11px;
+    }
+
+    .header-actions {
+        gap: 7px;
+    }
+
+    .nickname-button {
+        padding: 7px 9px;
+
+        font-size: 12px;
+    }
+
+    .online {
+        font-size: 10px;
+    }
+
+    .chat {
+        padding: 18px;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+
+    .input-area {
+        padding: 10px;
+    }
+
+    .input-area input {
+        padding: 12px;
+    }
+
+    .input-area button {
+        padding: 0 15px;
+    }
+
+    .modal-box {
+        padding: 25px;
+
+        border-radius: 22px;
+    }
+}
