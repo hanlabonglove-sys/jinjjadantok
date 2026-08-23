@@ -478,3 +478,65 @@ body {
         border-radius: 22px;
     }
 }
+.hidden {
+    display: none !important;
+}
+
+
+/* 관리자 버튼 */
+
+.admin-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    background: #222;
+    color: white;
+}
+
+
+/* 삭제 버튼 */
+
+.delete-button {
+    margin-top: 6px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    padding: 4px 8px;
+
+    cursor: pointer;
+
+    background: #e74c3c;
+
+    color: white;
+
+    font-size: 11px;
+}
+
+
+.delete-button:hover {
+    opacity: 0.8;
+}
+
+
+/* 관리자 상태 */
+
+.admin-status {
+    margin-top: 10px;
+
+    font-size: 13px;
+}
+
+
+.admin-status.success {
+    color: green;
+}
+
+
+.admin-status.error {
+    color: red;
+}
