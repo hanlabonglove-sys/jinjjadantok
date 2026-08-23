@@ -22,7 +22,6 @@ socketio = SocketIO(
 
 DB_FILE = "chat.db"
 
-# Render 환경변수에서 관리자 비밀번호를 가져옴
 ADMIN_PASSWORD = os.environ.get(
     "ADMIN_PASSWORD",
     "change-this-password"
@@ -32,7 +31,7 @@ online_users = {}
 
 
 # ==========================================
-# DB
+# DATABASE
 # ==========================================
 
 def get_db():
@@ -68,26 +67,32 @@ init_db()
 
 
 # ==========================================
-# 메인
+# MAIN PAGE
 # ==========================================
 
 @app.route("/")
 def index():
 
-    return render_template("index.html")
+    return render_template(
+        "index.html"
+    )
 
 
 # ==========================================
-# 이전 메시지
+# OLD MESSAGES
 # ==========================================
 
 @app.route("/api/messages")
-def messages():
+def get_messages():
 
     conn = get_db()
 
     rows = conn.execute("""
-        SELECT id, nickname, message, time
+        SELECT
+            id,
+            nickname,
+            message,
+            time
         FROM messages
         ORDER BY id ASC
         LIMIT 100
@@ -107,7 +112,7 @@ def messages():
 
 
 # ==========================================
-# robots.txt
+# ROBOTS
 # ==========================================
 
 @app.route("/robots.txt")
@@ -120,7 +125,7 @@ def robots():
 
 
 # ==========================================
-# sitemap.xml
+# SITEMAP
 # ==========================================
 
 @app.route("/sitemap.xml")
@@ -133,15 +138,7 @@ def sitemap():
 
 
 # ==========================================
-# Google Search Console
-# ==========================================
-
-# Google HTML 인증을 사용하지 않으므로
-# 별도 라우트는 필요 없음.
-
-
-# ==========================================
-# 접속
+# CONNECT
 # ==========================================
 
 @socketio.on("connect")
@@ -151,17 +148,16 @@ def handle_connect():
 
     online_users[sid] = "익명"
 
-    emit(
+    socketio.emit(
         "online_count",
         {
             "count": len(online_users)
-        },
-        broadcast=True
+        }
     )
 
 
 # ==========================================
-# 접속 종료
+# DISCONNECT
 # ==========================================
 
 @socketio.on("disconnect")
@@ -181,23 +177,28 @@ def handle_disconnect():
 
 
 # ==========================================
-# 닉네임
+# NICKNAME
 # ==========================================
 
 @socketio.on("set_nickname")
 def set_nickname(data):
 
     nickname = str(
-        data.get("nickname", "익명")
+        data.get(
+            "nickname",
+            "익명"
+        )
     ).strip()
 
     if not nickname:
+
         nickname = "익명"
 
     nickname = nickname[:20]
 
-    online_users[request.sid] = nickname
-
+    online_users[
+        request.sid
+    ] = nickname
 
     emit(
         "nickname_saved",
@@ -207,126 +208,96 @@ def set_nickname(data):
     )
 
 
-    socketio.emit(
-        "online_count",
-        {
-            "count": len(online_users)
-        }
-    )
-
-
 # ==========================================
-# 메시지 전송
+# SEND MESSAGE
 # ==========================================
 
 @socketio.on("send_message")
 def send_message(data):
 
     nickname = str(
-        data.get("nickname", "익명")
+        data.get(
+            "nickname",
+            "익명"
+        )
     ).strip()
 
     message = str(
-        data.get("message", "")
+        data.get(
+            "message",
+            ""
+        )
     ).strip()
 
 
     if not nickname:
         nickname = "익명"
 
+
     if not message:
         return
 
 
     nickname = nickname[:20]
+
     message = message[:500]
 
-
-    # ======================================
-    # 욕설 필터
-    # ======================================
-
-    banned_words = [
-        "씨발",
-        "시발",
-        "병신",
-        "좆",
-        "개새끼",
-        "ㅅㅂ",
-        "ㅄ",
-        "fuck",
-        "shit"
-    ]
-
-
-    filtered_message = message
-
-    for word in banned_words:
-
-        filtered_message = filtered_message.replace(
-            word,
-            "*" * len(word)
-        )
-
-
-    # ======================================
-    # 시간
-    # ======================================
 
     now = datetime.now().strftime(
         "%Y-%m-%d %H:%M"
     )
 
 
-    # ======================================
-    # DB 저장
-    # ======================================
-
     conn = get_db()
 
     cursor = conn.execute(
         """
         INSERT INTO messages
-        (nickname, message, time)
+        (
+            nickname,
+            message,
+            time
+        )
         VALUES (?, ?, ?)
         """,
         (
             nickname,
-            filtered_message,
+            message,
             now
         )
     )
 
+
     message_id = cursor.lastrowid
 
     conn.commit()
+
     conn.close()
 
-
-    # ======================================
-    # 모든 사용자에게 전송
-    # ======================================
 
     socketio.emit(
         "new_message",
         {
             "id": message_id,
             "nickname": nickname,
-            "message": filtered_message,
+            "message": message,
             "time": now
         }
     )
 
 
 # ==========================================
-# 관리자 로그인
+# ADMIN LOGIN
 # ==========================================
 
 @socketio.on("admin_login")
 def admin_login(data):
 
     password = str(
-        data.get("password", "")
+        data.get(
+            "password",
+            ""
+        )
     )
 
 
@@ -350,46 +321,66 @@ def admin_login(data):
 
 
 # ==========================================
-# 관리자 메시지 삭제
+# DELETE MESSAGE
 # ==========================================
 
 @socketio.on("delete_message")
 def delete_message(data):
 
     password = str(
-        data.get("password", "")
+        data.get(
+            "password",
+            ""
+        )
     )
 
-    message_id = data.get("id")
+
+    message_id = data.get(
+        "id"
+    )
 
 
     # 관리자 비밀번호 확인
+
     if password != ADMIN_PASSWORD:
         return
 
 
     try:
 
-        message_id = int(message_id)
+        message_id = int(
+            message_id
+        )
 
-    except (TypeError, ValueError):
+    except (
+        TypeError,
+        ValueError
+    ):
 
         return
 
 
     conn = get_db()
 
+
     cursor = conn.execute(
         """
         DELETE FROM messages
         WHERE id = ?
         """,
-        (message_id,)
+        (
+            message_id,
+        )
     )
 
-    deleted = cursor.rowcount > 0
+
+    deleted = (
+        cursor.rowcount > 0
+    )
+
 
     conn.commit()
+
     conn.close()
 
 
@@ -397,7 +388,8 @@ def delete_message(data):
         return
 
 
-    # 모든 사람에게 삭제 알림
+    # 모든 사용자에게 삭제 알림
+
     socketio.emit(
         "message_deleted",
         {
@@ -407,7 +399,7 @@ def delete_message(data):
 
 
 # ==========================================
-# 실행
+# START
 # ==========================================
 
 if __name__ == "__main__":
@@ -418,6 +410,7 @@ if __name__ == "__main__":
             10000
         )
     )
+
 
     socketio.run(
         app,
