@@ -17,7 +17,10 @@
     >
 
     <!-- SEO -->
-    <title>진짜 단톡 - 무료 실시간 채팅</title>
+
+    <title>
+        진짜 단톡 - 무료 실시간 채팅
+    </title>
 
     <meta
         name="description"
@@ -35,6 +38,13 @@
     >
 
     <meta
+        name="author"
+        content="진짜 단톡"
+    >
+
+    <!-- Open Graph -->
+
+    <meta
         property="og:title"
         content="진짜 단톡 - 무료 실시간 채팅"
     >
@@ -50,6 +60,8 @@
     >
 
 
+    <!-- CSS -->
+
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
@@ -64,9 +76,12 @@
 <div class="app">
 
 
-    <!-- 상단 -->
+    <!-- ==========================
+         HEADER
+    =========================== -->
 
     <header class="topbar">
+
 
         <div class="title-area">
 
@@ -82,6 +97,9 @@
 
 
         <div class="header-actions">
+
+
+            <!-- 닉네임 -->
 
             <button
                 id="nicknameButton"
@@ -100,6 +118,8 @@
             </button>
 
 
+            <!-- 관리자 -->
+
             <button
                 id="adminButton"
                 class="admin-button"
@@ -109,9 +129,13 @@
             </button>
 
 
+            <!-- 접속자 -->
+
             <div class="online">
 
-                <span class="online-dot"></span>
+                <span
+                    class="online-dot"
+                ></span>
 
                 <span id="onlineCount">
                     0
@@ -121,13 +145,16 @@
 
             </div>
 
+
         </div>
 
     </header>
 
 
 
-    <!-- 소개 -->
+    <!-- ==========================
+         SEO INTRO
+    =========================== -->
 
     <section class="seo-intro">
 
@@ -144,9 +171,13 @@
 
 
 
-    <!-- 채팅 -->
+    <!-- ==========================
+         CHAT
+    =========================== -->
 
-    <main class="chat">
+    <main
+        class="chat"
+    >
 
         <div
             id="messages"
@@ -157,7 +188,9 @@
 
 
 
-    <!-- 입력 -->
+    <!-- ==========================
+         INPUT
+    =========================== -->
 
     <form
         id="messageForm"
@@ -172,7 +205,9 @@
             autocomplete="off"
         >
 
-        <button type="submit">
+        <button
+            type="submit"
+        >
             전송
         </button>
 
@@ -183,9 +218,9 @@
 
 
 
-<!-- ==========================================
-     닉네임 최초 설정
-========================================== -->
+<!-- ==========================
+     NICKNAME MODAL
+=========================== -->
 
 <div
     id="nicknameModal"
@@ -202,7 +237,10 @@
             사용할 닉네임을 입력해주세요.
         </p>
 
-        <form id="nicknameForm">
+
+        <form
+            id="nicknameForm"
+        >
 
             <input
                 id="nicknameInput"
@@ -213,7 +251,9 @@
                 required
             >
 
-            <button type="submit">
+            <button
+                type="submit"
+            >
                 입장하기
             </button>
 
@@ -225,9 +265,9 @@
 
 
 
-<!-- ==========================================
-     닉네임 변경
-========================================== -->
+<!-- ==========================
+     CHANGE NICKNAME
+=========================== -->
 
 <div
     id="changeNicknameModal"
@@ -244,7 +284,10 @@
             새로운 닉네임을 입력해주세요.
         </p>
 
-        <form id="changeNicknameForm">
+
+        <form
+            id="changeNicknameForm"
+        >
 
             <input
                 id="changeNicknameInput"
@@ -255,7 +298,9 @@
                 required
             >
 
-            <button type="submit">
+            <button
+                type="submit"
+            >
                 변경하기
             </button>
 
@@ -267,9 +312,9 @@
 
 
 
-<!-- ==========================================
-     관리자 로그인
-========================================== -->
+<!-- ==========================
+     ADMIN
+=========================== -->
 
 <div
     id="adminModal"
@@ -286,7 +331,10 @@
             관리자 비밀번호를 입력하세요.
         </p>
 
-        <form id="adminForm">
+
+        <form
+            id="adminForm"
+        >
 
             <input
                 id="adminPassword"
@@ -296,11 +344,14 @@
                 required
             >
 
-            <button type="submit">
+            <button
+                type="submit"
+            >
                 관리자 로그인
             </button>
 
         </form>
+
 
         <p
             id="adminStatus"
