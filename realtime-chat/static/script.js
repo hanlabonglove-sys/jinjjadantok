@@ -1,15 +1,18 @@
-/* =========================
-   Socket.IO 연결
-========================= */
-
-const socket = io({
-    transports: ["polling", "websocket"]
-});
+const socket = io();
 
 
-/* =========================
-   HTML 요소
-========================= */
+let nickname =
+    localStorage.getItem("nickname") || "";
+
+
+let adminPassword =
+    sessionStorage.getItem("adminPassword") || "";
+
+
+let isAdmin =
+    adminPassword !== "";
+
+
 
 const messages =
     document.getElementById("messages");
@@ -20,6 +23,14 @@ const messageForm =
 const messageInput =
     document.getElementById("messageInput");
 
+const onlineCount =
+    document.getElementById("onlineCount");
+
+const currentNickname =
+    document.getElementById("currentNickname");
+
+
+
 const nicknameModal =
     document.getElementById("nicknameModal");
 
@@ -28,6 +39,8 @@ const nicknameForm =
 
 const nicknameInput =
     document.getElementById("nicknameInput");
+
+
 
 const changeNicknameModal =
     document.getElementById("changeNicknameModal");
@@ -38,302 +51,442 @@ const changeNicknameForm =
 const changeNicknameInput =
     document.getElementById("changeNicknameInput");
 
-const nicknameButton =
-    document.getElementById("nicknameButton");
-
-const currentNickname =
-    document.getElementById("currentNickname");
-
-const onlineCount =
-    document.getElementById("onlineCount");
 
 
-/* =========================
-   상태
-========================= */
+const adminButton =
+    document.getElementById("adminButton");
 
-let nickname =
-    localStorage.getItem("chat_nickname") || "";
+const adminModal =
+    document.getElementById("adminModal");
 
-let connected = false;
+const adminForm =
+    document.getElementById("adminForm");
+
+const adminPasswordInput =
+    document.getElementById("adminPassword");
+
+const adminStatus =
+    document.getElementById("adminStatus");
 
 
-/* =========================
+
+/* ==========================================
    닉네임 표시
-========================= */
+========================================== */
 
-function updateNicknameDisplay() {
+function updateNicknameUI() {
 
     currentNickname.textContent =
         nickname || "익명";
 }
 
 
-/* 처음 표시 */
 
-updateNicknameDisplay();
+/* ==========================================
+   닉네임 최초 설정
+========================================== */
 
-
-/* =========================
-   최초 닉네임
-========================= */
-
-if (nickname) {
-
-    nicknameModal.classList.add("hidden");
-
-} else {
+if (!nickname) {
 
     nicknameModal.classList.remove("hidden");
 
-    setTimeout(function () {
+} else {
 
-        nicknameInput.focus();
+    nicknameModal.classList.add("hidden");
 
-    }, 300);
+    updateNicknameUI();
+
+    socket.emit(
+        "set_nickname",
+        {
+            nickname: nickname
+        }
+    );
 }
 
 
-/* =========================
-   최초 닉네임 등록
-========================= */
+
+/* ==========================================
+   닉네임 최초 입력
+========================================== */
 
 nicknameForm.addEventListener(
     "submit",
-    function (event) {
+    function(event) {
 
         event.preventDefault();
+
 
         const value =
             nicknameInput.value.trim();
 
+
         if (!value) {
-
-            nicknameInput.focus();
-
             return;
         }
 
-        nickname =
-            value.substring(0, 20);
+
+        nickname = value.substring(0, 20);
+
 
         localStorage.setItem(
-            "chat_nickname",
+            "nickname",
             nickname
         );
 
-        updateNicknameDisplay();
+
+        updateNicknameUI();
 
 
-        if (connected) {
-
-            socket.emit(
-                "set_nickname",
-                {
-                    nickname: nickname
-                }
-            );
-        }
+        socket.emit(
+            "set_nickname",
+            {
+                nickname: nickname
+            }
+        );
 
 
         nicknameModal.classList.add(
             "hidden"
         );
 
+
         messageInput.focus();
+
     }
 );
 
 
-/* =========================
+
+/* ==========================================
    닉네임 변경 버튼
-========================= */
+========================================== */
 
-nicknameButton.addEventListener(
-    "click",
-    function () {
+document
+    .getElementById("nicknameButton")
+    .addEventListener(
+        "click",
+        function() {
 
-        changeNicknameInput.value =
-            nickname;
+            changeNicknameInput.value =
+                nickname;
 
-        changeNicknameModal.classList.remove(
-            "hidden"
-        );
-
-        setTimeout(function () {
+            changeNicknameModal.classList.remove(
+                "hidden"
+            );
 
             changeNicknameInput.focus();
 
-            changeNicknameInput.select();
-
-        }, 50);
-    }
-);
+        }
+    );
 
 
-/* =========================
+
+/* ==========================================
    닉네임 변경
-========================= */
+========================================== */
 
 changeNicknameForm.addEventListener(
     "submit",
-    function (event) {
+    function(event) {
 
         event.preventDefault();
 
-        const newNickname =
+
+        const value =
             changeNicknameInput.value.trim();
 
-        if (!newNickname) {
 
-            changeNicknameInput.focus();
-
+        if (!value) {
             return;
         }
 
+
         nickname =
-            newNickname.substring(0, 20);
+            value.substring(0, 20);
 
 
         localStorage.setItem(
-            "chat_nickname",
+            "nickname",
             nickname
         );
 
 
-        updateNicknameDisplay();
+        updateNicknameUI();
 
 
-        if (connected) {
-
-            socket.emit(
-                "set_nickname",
-                {
-                    nickname: nickname
-                }
-            );
-        }
+        socket.emit(
+            "set_nickname",
+            {
+                nickname: nickname
+            }
+        );
 
 
         changeNicknameModal.classList.add(
             "hidden"
         );
 
-        messageInput.focus();
     }
 );
 
 
-/* =========================
-   Socket.IO 연결
-========================= */
 
-socket.on(
-    "connect",
-    function () {
+/* ==========================================
+   메시지 전송
+========================================== */
 
-        connected = true;
+messageForm.addEventListener(
+    "submit",
+    function(event) {
 
-        console.log(
-            "Socket.IO connected:",
-            socket.id
-        );
+        event.preventDefault();
 
 
-        if (nickname) {
+        const message =
+            messageInput.value.trim();
 
-            socket.emit(
-                "set_nickname",
-                {
-                    nickname: nickname
-                }
-            );
+
+        if (!message) {
+            return;
         }
 
 
-        loadMessages();
-    }
-);
-
-
-/* =========================
-   연결 종료
-========================= */
-
-socket.on(
-    "disconnect",
-    function () {
-
-        connected = false;
-
-        console.log(
-            "Socket.IO disconnected"
+        socket.emit(
+            "send_message",
+            {
+                nickname: nickname || "익명",
+                message: message
+            }
         );
+
+
+        messageInput.value = "";
+
+        messageInput.focus();
+
     }
 );
 
 
-/* =========================
-   연결 오류
-========================= */
 
-socket.on(
-    "connect_error",
-    function (error) {
+/* ==========================================
+   메시지 추가
+========================================== */
 
-        console.error(
-            "Socket.IO connection error:",
-            error
+function addMessage(data) {
+
+    const messageElement =
+        document.createElement("div");
+
+
+    messageElement.className =
+        "message";
+
+
+    messageElement.dataset.id =
+        data.id;
+
+
+
+    const top =
+        document.createElement("div");
+
+    top.className =
+        "message-top";
+
+
+
+    const name =
+        document.createElement("strong");
+
+    name.textContent =
+        data.nickname;
+
+
+
+    const time =
+        document.createElement("span");
+
+    time.textContent =
+        data.time;
+
+
+
+    top.appendChild(name);
+
+    top.appendChild(time);
+
+
+
+    const text =
+        document.createElement("div");
+
+    text.className =
+        "message-text";
+
+    text.textContent =
+        data.message;
+
+
+
+    messageElement.appendChild(top);
+
+    messageElement.appendChild(text);
+
+
+
+    /* 관리자 삭제 버튼 */
+
+    if (isAdmin) {
+
+        addDeleteButton(
+            messageElement,
+            data.id
         );
+
     }
-);
 
 
-/* =========================
-   연결 완료
-========================= */
+
+    messages.appendChild(
+        messageElement
+    );
+
+
+    messages.scrollTop =
+        messages.scrollHeight;
+}
+
+
+
+/* ==========================================
+   관리자 삭제 버튼
+========================================== */
+
+function addDeleteButton(
+    messageElement,
+    messageId
+) {
+
+    if (
+        messageElement.querySelector(
+            ".delete-button"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const button =
+        document.createElement("button");
+
+
+    button.className =
+        "delete-button";
+
+
+    button.textContent =
+        "삭제";
+
+
+    button.type =
+        "button";
+
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            if (!isAdmin) {
+                return;
+            }
+
+
+            const ok =
+                confirm(
+                    "이 메시지를 삭제할까요?"
+                );
+
+
+            if (!ok) {
+                return;
+            }
+
+
+            socket.emit(
+                "delete_message",
+                {
+                    id: messageId,
+                    password: adminPassword
+                }
+            );
+
+        }
+    );
+
+
+    messageElement.appendChild(
+        button
+    );
+}
+
+
+
+/* ==========================================
+   새 메시지
+========================================== */
 
 socket.on(
-    "connected",
-    function (data) {
+    "new_message",
+    function(data) {
 
-        onlineCount.textContent =
-            data.online;
+        addMessage(data);
+
     }
 );
 
 
-/* =========================
-   접속자 수
-========================= */
+
+/* ==========================================
+   메시지 삭제
+========================================== */
 
 socket.on(
-    "online_count",
-    function (data) {
+    "message_deleted",
+    function(data) {
 
-        onlineCount.textContent =
-            data.count;
+        const element =
+            document.querySelector(
+                `.message[data-id="${data.id}"]`
+            );
+
+
+        if (element) {
+
+            element.remove();
+
+        }
+
     }
 );
 
 
-/* =========================
-   이전 채팅 불러오기
-========================= */
+
+/* ==========================================
+   이전 메시지 불러오기
+========================================== */
 
 async function loadMessages() {
 
     try {
 
         const response =
-            await fetch("/api/messages");
-
-        if (!response.ok) {
-
-            throw new Error(
-                "메시지 요청 실패"
+            await fetch(
+                "/api/messages"
             );
-        }
 
 
         const data =
@@ -344,264 +497,165 @@ async function loadMessages() {
 
 
         data.forEach(
-            function (message) {
+            function(message) {
 
                 addMessage(message);
+
             }
         );
 
 
-        scrollToBottom();
-
     } catch (error) {
 
         console.error(
-            "메시지를 불러오지 못했습니다:",
+            "메시지를 불러오지 못했습니다.",
             error
         );
+
     }
+
 }
 
 
-/* =========================
-   실시간 메시지
-========================= */
+loadMessages();
+
+
+
+/* ==========================================
+   접속자 수
+========================================== */
 
 socket.on(
-    "new_message",
-    function (message) {
+    "online_count",
+    function(data) {
 
-        addMessage(message);
+        onlineCount.textContent =
+            data.count;
 
-        scrollToBottom();
     }
 );
 
 
-/* =========================
-   메시지 표시
-========================= */
 
-function addMessage(message) {
+/* ==========================================
+   관리자 버튼
+========================================== */
 
-    const wrapper =
-        document.createElement("div");
+adminButton.addEventListener(
+    "click",
+    function() {
 
-
-    const isMine =
-        message.nickname === nickname;
-
-
-    wrapper.className =
-        "message " +
-        (
-            isMine
-                ? "mine"
-                : "other"
+        adminModal.classList.remove(
+            "hidden"
         );
 
 
-    /* 닉네임 */
+        adminPasswordInput.focus();
 
-    const nicknameElement =
-        document.createElement("div");
-
-    nicknameElement.className =
-        "nickname";
-
-    nicknameElement.textContent =
-        message.nickname;
+    }
+);
 
 
-    /* 메시지 */
 
-    const bubble =
-        document.createElement("div");
+/* ==========================================
+   관리자 로그인
+========================================== */
 
-    bubble.className =
-        "bubble";
-
-    /*
-       textContent를 사용하기 때문에
-       사용자가 HTML/스크립트를 입력해도
-       코드로 실행되지 않음
-    */
-
-    bubble.textContent =
-        message.message;
-
-
-    /* 시간 */
-
-    const time =
-        document.createElement("div");
-
-    time.className =
-        "time";
-
-    time.textContent =
-        message.time;
-
-
-    wrapper.appendChild(
-        nicknameElement
-    );
-
-    wrapper.appendChild(
-        bubble
-    );
-
-    wrapper.appendChild(
-        time
-    );
-
-
-    messages.appendChild(
-        wrapper
-    );
-}
-
-
-/* =========================
-   메시지 전송
-========================= */
-
-messageForm.addEventListener(
+adminForm.addEventListener(
     "submit",
-    function (event) {
+    function(event) {
 
         event.preventDefault();
 
 
-        const message =
-            messageInput.value.trim();
+        const password =
+            adminPasswordInput.value;
 
 
-        if (!message) {
-
-            return;
-        }
-
-
-        if (!nickname) {
-
-            nicknameModal.classList.remove(
-                "hidden"
-            );
-
-            return;
-        }
-
-
-        if (!connected) {
-
-            alert(
-                "서버와 연결되지 않았습니다."
-            );
-
+        if (!password) {
             return;
         }
 
 
         socket.emit(
-            "send_message",
+            "admin_login",
             {
-                nickname: nickname,
-                message: message
+                password: password
             }
         );
 
-
-        messageInput.value = "";
-
-        messageInput.focus();
     }
 );
 
 
-/* =========================
-   Enter로 전송
-========================= */
 
-messageInput.addEventListener(
-    "keydown",
-    function (event) {
+/* ==========================================
+   관리자 로그인 결과
+========================================== */
 
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
+socket.on(
+    "admin_login_result",
+    function(data) {
 
-            event.preventDefault();
+        if (data.success) {
 
-            messageForm.requestSubmit();
-        }
-    }
-);
+            isAdmin = true;
+
+            adminPassword =
+                adminPasswordInput.value;
 
 
-/* =========================
-   모달 바깥 클릭
-========================= */
+            sessionStorage.setItem(
+                "adminPassword",
+                adminPassword
+            );
 
-changeNicknameModal.addEventListener(
-    "click",
-    function (event) {
 
-        if (
-            event.target ===
-            changeNicknameModal
-        ) {
+            adminStatus.textContent =
+                "관리자로 로그인되었습니다.";
 
-            changeNicknameModal.classList.add(
+
+            adminStatus.className =
+                "admin-status success";
+
+
+            adminModal.classList.add(
                 "hidden"
             );
 
-            messageInput.focus();
+
+            /*
+             * 이미 화면에 있는 메시지에도
+             * 삭제 버튼 추가
+             */
+
+            document
+                .querySelectorAll(".message")
+                .forEach(
+                    function(element) {
+
+                        addDeleteButton(
+                            element,
+                            element.dataset.id
+                        );
+
+                    }
+                );
+
+
+            adminPasswordInput.value = "";
+
+
+        } else {
+
+            adminStatus.textContent =
+                "관리자 비밀번호가 틀렸습니다.";
+
+
+            adminStatus.className =
+                "admin-status error";
+
         }
+
     }
 );
-
-
-/* =========================
-   ESC로 닫기
-========================= */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key !== "Escape") {
-            return;
-        }
-
-
-        if (
-            !changeNicknameModal.classList.contains(
-                "hidden"
-            )
-        ) {
-
-            changeNicknameModal.classList.add(
-                "hidden"
-            );
-
-            messageInput.focus();
-        }
-    }
-);
-
-
-/* =========================
-   자동 스크롤
-========================= */
-
-function scrollToBottom() {
-
-    const chat =
-        document.querySelector(".chat");
-
-
-    chat.scrollTop =
-        chat.scrollHeight;
-}
