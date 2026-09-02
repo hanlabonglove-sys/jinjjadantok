@@ -6,15 +6,7 @@ from flask import Flask, render_template, jsonify, send_from_directory, request
 from flask_socketio import SocketIO, emit
 
 
-app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY",
-    "jinjjadantok-secret-key"
-)
-
-socketio = SocketIO(
-    app,
     cors_allowed_origins="*",
     async_mode="threading"
 )
@@ -66,89 +58,6 @@ def init_db():
 init_db()
 
 
-# ==========================================
-# MAIN PAGE
-# ==========================================
-
-@app.route("/")
-def index():
-
-    return render_template(
-        "index.html"
-    )
-
-
-# ==========================================
-# OLD MESSAGES
-# ==========================================
-
-@app.route("/api/messages")
-def get_messages():
-
-    conn = get_db()
-
-    rows = conn.execute("""
-        SELECT
-            id,
-            nickname,
-            message,
-            time
-        FROM messages
-        ORDER BY id ASC
-        LIMIT 100
-    """).fetchall()
-
-    conn.close()
-
-    return jsonify([
-        {
-            "id": row["id"],
-            "nickname": row["nickname"],
-            "message": row["message"],
-            "time": row["time"]
-        }
-        for row in rows
-    ])
-
-
-# ==========================================
-# ROBOTS
-# ==========================================
-
-@app.route("/robots.txt")
-def robots():
-
-    return send_from_directory(
-        "static",
-        "robots.txt"
-    )
-
-
-# ==========================================
-# SITEMAP
-# ==========================================
-
-@app.route("/sitemap.xml")
-def sitemap():
-
-    return send_from_directory(
-        "static",
-        "sitemap.xml"
-    )
-
-
-# ==========================================
-# CONNECT
-# ==========================================
-
-@socketio.on("connect")
-def handle_connect():
-
-    sid = request.sid
-
-    online_users[sid] = "익명"
-
-    socketio.emit(
         "online_count",
         {
             "count": len(online_users)
